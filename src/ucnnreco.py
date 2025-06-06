@@ -18,7 +18,8 @@ import models.c_scampi.unet_model as CScampiModel
 import models.nc_scampi.unet_model as NCScampiModel
 from functools import partial
 
-import models.c_scampi.conv_model as CScampiModeltwo
+#import models.c_scampi.conv_model as CScampiModeltwo
+import models.nc_scampi.conv_model as CScampiModeltwo
 
 from utils.data_utils import toReal, toComplex, mda_slice, DipDataset, Trainer
 from utils.cartesian.transforms import cartesian_backward
