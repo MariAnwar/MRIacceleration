@@ -279,10 +279,27 @@ class NonCartesianScampi(UcnnReco):
         self.dl = DipDataset(self.x, self.target)
 
     def prep_model(self):
-        self.model = (NCScampiModel.DipUnet(self.n_channels, self.n_channels, produce=False,
-                                            imagespace=True, data_consistency=True,
-                                            skip_connections=self.recopars['skip_connections'])
-                      .to(self.device).to(self.dtype))
+        #self.model = (NCScampiModel.DipUnet(self.n_channels, self.n_channels, produce=False,
+                                            #imagespace=True, data_consistency=True,
+                                            #skip_connections=self.recopars['skip_connections'])
+                      #.to(self.device).to(self.dtype))
+        input_dim = 16  # for example
+        input_shape = (8, 4)
+        out_size = (self.dim[1], self.dim[2]) 
+        self.model = CScampiModeltwo.DipConvDecoder(
+            input_dim=input_dim, 
+            num_layers=8, 
+            num_channels=256, 
+            num_output_channels=self.n_channels, 
+            out_size=out_size, 
+            in_size=input_shape, 
+            mask=self.sampling_mask, 
+            produce=False,
+            apply_data_consistency=True, 
+            k0=self.target, 
+            coilmap=self.coilmap 
+            #,scale_out=self.recopars['scale_out']
+                        ).to(device=torch.device(self.device)).to(self.dtype)
         nufft_forward = partial(radial_forward, coilmaps=self.coilmap, ktraj=self.ktraj, nufft_ob=self.nuff_op)
         nufft_backward = partial(radial_backward, im_size=self.im_size, coilmaps=self.coilmap, ktraj=self.ktraj,
                                  nufft_ob_adj=self.nuff_op_adj)
